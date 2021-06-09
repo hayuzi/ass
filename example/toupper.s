@@ -129,14 +129,14 @@ read_loop_begin:
 
 
 continue_read_loop:
-    # ##将字符块内容转换成大写形式###
+    # ###将字符块内容转换成大写形式### #
     pushl $BUFFER_DATA		# 缓冲区位置
     pushl %eax				# 缓冲区大小
     call convert_to_upper		
     popl %eax				# 重新获取大小
     addl $4, %esp			# 恢复%esp
 
-    # ##将字符块写入输出文件###
+    # ###将字符块写入输出文件### #
     # 缓冲区大小
     movl %eax, %edx
     movl $SYS_WRITE, %eax
@@ -144,28 +144,28 @@ continue_read_loop:
     movl ST_FD_OUT(%ebp), %ebx
     # 缓冲区位置
     movl $BUFFER_DATA, %ecx
+    # 系统调用
     int $LINUX_SYSCALL
 
-
-    ###循环继续###
+    # ###循环继续### #
     jmp read_loop_begin
 
 end_loop:
 ###关闭文件###
-# 注意 - 这里我们无需进行错误检测
-#		 因为错误情况不代表任何特殊含义
-movl $SYS_CLOSE, %eax
-movl ST_FD_OUT(%ebp), %ebx
-int $LINUX_SYSCALL
+    # 注意 - 这里我们无需进行错误检测
+    #		 因为错误情况不代表任何特殊含义
+    movl $SYS_CLOSE, %eax
+    movl ST_FD_OUT(%ebp), %ebx
+    int $LINUX_SYSCALL
 
-movl $SYS_CLOSE, %eax
-movl ST_FD_IN(%ebp), %ebx
-int $LINUX_SYSCALL
+    movl $SYS_CLOSE, %eax
+    movl ST_FD_IN(%ebp), %ebx
+    int $LINUX_SYSCALL
 
-###退出###
-movl $SYS_EXIT, %eax
-movl $0, %ebx
-int $LINUX_SYSCALL
+    # ###退出###  #
+    movl $SYS_EXIT, %eax
+    movl $0, %ebx
+    int $LINUX_SYSCALL
 
 # 目的: 这个函数实际上将字符快内容转换为大写形式
 # 
@@ -182,52 +182,55 @@ int $LINUX_SYSCALL
 #						(%ecx的第一部分)
 #
 
-###常数###
-# 我们搜索的下边界
-.equ LOWERCASE_A, 'a'
-# 我们搜索的上边界
-.equ LOWERCASE_Z, 'z'
-# 大小写转换
-.equ UPPER_CONVERSION, 'A' - 'a'
+    # ###常数###
+    # 我们搜索的下边界
+    .equ LOWERCASE_A, 'a'
+    # 我们搜索的上边界
+    .equ LOWERCASE_Z, 'z'
+    # 大小写转换
+    .equ UPPER_CONVERSION, 'A' - 'a'
 
-###栈相关信息###
-.equ ST_BUFFER_LEN, 8		# 缓冲区长度
-.equ ST_BUFFER, 12			# 实际缓冲区
+    #  ###栈相关信息###
+    .equ ST_BUFFER_LEN, 8		# 缓冲区长度
+    .equ ST_BUFFER, 12			# 实际缓冲区
+
 convert_to_upper:
-pushl %ebp
-movl %esp, %ebp
+    # 保存基指针到栈内
+    pushl %ebp
+    movl %esp, %ebp
 
-###设置变量###
-movl ST_BUFFER(%ebp), %eax
-movl ST_BUFFER_LEN(%ebp), %ebx
-movl $0, %edi
+    # ###设置变量###
+    movl ST_BUFFER(%ebp), %eax
+    movl ST_BUFFER_LEN(%ebp), %ebx
+    movl $0, %edi
 
-# 如果给定的缓冲区长度为0即离开
-cmpl $0, %ebx
-je end_convert_loop
+    # 如果给定的缓冲区长度为0即离开
+    cmpl $0, %ebx
+    je end_convert_loop
 
 convert_loop:
-# 获取当前字节
-movb (%eax, %edi, 1), %cl
+    # 获取当前字节（ %cl是低位8位寄存器 ）
+    movb (%eax, %edi, 1), %cl
 
-# 除非该字节在'a'和'z'之间, 否则读取下一个字节
-cmpb $LOWERCASE_A, %cl
-jl next_byte
-cmpb $LOWERCASE_Z, %cl
-jg next_byte
+    # 除非该字节在'a'和'z'之间, 否则读取下一个字节
+    cmpb $LOWERCASE_A, %cl
+    jl next_byte
+    cmpb $LOWERCASE_Z, %cl
+    jg next_byte
 
-# 否则将字节转换为大写字母
-addb $UPPER_CONVERSION, %cl
-# 并存回原处
-movb %cl, (%eax, %edi, 1)
+    # 否则将字节转换为大写字母
+    addb $UPPER_CONVERSION, %cl
+    # 并存回原处
+    movb %cl, (%eax, %edi, 1)
+
 next_byte:
-incl %edi				# 下一字节
-cmpl %edi, %ebx			# 继续执行程序
-						# 直到文件结束
-jne convert_loop		
+    incl %edi				# 下一字节
+    cmpl %edi, %ebx			# 继续执行程序
+                            # 直到文件结束
+    jne convert_loop	    # 不等于就跳转	
 
 end_convert_loop:
-# 无返回值, 离开程序即可
-movl %ebp, %esp
-popl %ebp
-ret
+    # 无返回值, 离开程序即可
+    movl %ebp, %esp
+    popl %ebp
+    ret

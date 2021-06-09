@@ -1,6 +1,20 @@
 深入理解程序设计一
 ==
 
+汇编与链接执行
+```
+# 使用如下命令汇编与链接
+$ as -o test.o test.s
+$ ld -o test test.o
+
+# 目前在64位机器上编译与执行执行相关代码
+$ as --32 -o create.o create.s
+$ ld -m elf_i386 -o create create.o
+
+# 之后就可以执行链接好的文件
+./create
+```
+
 ## 1. 引言
 
 此处需要了解一下GCC工具集以及Linux的内核版本环境。

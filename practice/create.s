@@ -89,4 +89,8 @@ _start:
 # $ as --gstabs -o create.o create.s
 # $ as -o create.o create.s
 # $ ld -o create create.o
-#
+
+# 目前在64位机器上编译与执行执行相关代码
+# $ as --32 -o create.o create.s
+# $ ld -m elf_i386 -o create create.o
+
