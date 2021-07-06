@@ -8,7 +8,7 @@
 - [入门与寻址方式 doc1.md](doc1.md)
 - [关于函数 doc2.md](doc2.md)
 - [文件处理 doc3.md](doc3.md)
-- [doc4.md](doc4.md)
+- [读写简单记录 doc4.md](doc4.md)
 
 
 ### 2.调试工具
