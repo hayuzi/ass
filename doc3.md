@@ -69,7 +69,7 @@ UNIX的操作系统把所有输入/输出系统都视作文件。
 .equ 指令允许你为数字分配名称
 
 程序中使用文件代码如下
-请参考 [toupper.s](/example/toupper.s)
+请参考 [toupper.s](/example/toupper/toupper.s)
 
 
 ### 5.5 温故知心

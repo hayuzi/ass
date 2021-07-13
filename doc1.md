@@ -72,7 +72,7 @@ CPU包含以下元件：
 ## 3. 编写第一个程序
 
 ### 3.1 汇编编程初体验, 汇编语言概要
-参考文件 [example/exit.s](/example/exit.s)
+参考文件 [example/exit/exit.s](/example/exit/exit.s)
 
 #### 汇编代码的编译
 
@@ -85,7 +85,7 @@ $ ld -o hello hello.o
 ### 3.3 为程序做规划
 
 ### 3.4 查找最大值
-参考文件 [example/maximum.s](/example/maximum.s)
+参考文件 [example/maximum/maximum.s](/example/maximum/maximum.s)
 
 ### 3.5 寻址方式指令
 
