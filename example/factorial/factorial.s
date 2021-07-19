@@ -32,10 +32,10 @@ factorial:
     pushl %ebp       # 标准函数 - 我们必须在返回前
                      # 恢复 %ebp 到其之前的状态
                      # 因此我们必须将其入栈
-    movl  %esp, %ebp # 这条指令是以内我们不想更改栈指针，所以使用%ebp
+    movl  %esp, %ebp # 这条指令是因为我们不想更改栈指针，所以使用%ebp
     
     movl  8(%ebp), %eax # 将第一个参数移入 %eax
-                        # 4(%ebp) 保伦返回地址，而
+                        # 4(%ebp) 保存返回地址，而
                         # 8(%ebp) 保存第一个参数
     cmpl  $1, %eax      # 如果数字为1，这就是我们的基线条件
                         # 我们只要返回即可（ 1 已经作为返回值在%eax中了 ）
@@ -49,7 +49,7 @@ factorial:
                         # 答案存入%eax，而%eax正是存放返回值的地方
 
 end_factorial:
-    movl  %ebp, %esp    # 表春函数返回相关处理 - 我们
+    movl  %ebp, %esp    # 标准函数返回相关处理 - 我们
     popl  %ebp          # 必须将 %ebp 和 %esp 恢复到
                         # 函数开始运行前的状态
     ret                 # 返回到函数 (这也会将返回值
