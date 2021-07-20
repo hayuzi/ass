@@ -1,22 +1,22 @@
 .include "linux.s"
 .include "record_def.s"
-# 目的:   本函数从文件描述符读取一条记录
+# 目的:   本函数将一条记录写入给定文件描述符
 #
 # 输入:   文件描述符和缓冲区
 #
-# 输出:   本函数将数据写入缓冲区，并返回状态码
+# 输出:   本函数产生状态码
 #
 # 栈局部变量
-.equ ST_READ_BUFFER, 8
+.equ ST_WRITE_BUFFER, 8
 .equ ST_FILEDES, 12
 
 .section .text
 
-.globl read_record
+.globl write_record
 
-.type read_record, @function
+.type write_record, @function
 
-read_record:
+write_record:
     pushl %ebp              # 标准函数 - 我们必须在返回前
                             # 恢复 %ebp 到其之前的状态
                             # 因此我们必须将其入栈
@@ -24,10 +24,10 @@ read_record:
                             # 4(%ebp) 保存了返回地址，所以以下获取参数从 8 和 12开始
     
     pushl %ebx                          # %ebx 数据入栈 
+    movl  $SYS_WRITE, %eax              # 系统调用号放到 %eax
     movl  ST_FILEDES(%ebp), %ebx        # 12(%ebp)的数据移动到 %ebx寄存器   # 12(%ebp) 保存第二个参数
-    movl  ST_READ_BUFFER(%ebp), %ecx    # 8(%ebp)的数据移动到 %ecx寄存器    # 8(%ebp) 保存第一个参数
+    movl  ST_WRITE_BUFFER(%ebp), %ecx    # 8(%ebp)的数据移动到 %ecx寄存器    # 8(%ebp) 保存第一个参数
     movl  $RECORD_SIZE, %edx            # 324这个记录长度值移动到 %edx寄存器中
-    movl  $SYS_READ, %eax               # 系统调用号放到 %eax
     int   $LINUX_SYSCALL                # 触发系统调用
 
 # 注意 - %eax 中含返回值，我们将该值传回调用程序
