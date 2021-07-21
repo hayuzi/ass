@@ -54,47 +54,50 @@ record3:
     .endr
     .long 36
     
-#This is the name of the file we will write to
+# 这是我们要写入文件的文件名
 file_name:
     .ascii "test.dat\0"
     .equ ST_FILE_DESCRIPTOR, -4
     
 .globl _start
 _start:
-    #Copy the stack pointer to %ebp
+    # 复制栈指针到 %ebp
     movl  %esp, %ebp
-    #Allocate space to hold the file descriptor
+    # 为文件描述符分配空间
     subl  $4, %esp
-    #Open the file
+    # 打开文件
     movl  $SYS_OPEN, %eax
     movl  $file_name, %ebx
-    movl  $0101, %ecx #This says to create if it
-    #doesn’t exist, and open for
-    #writing
+    movl  $0101, %ecx       # 本指令表明如果文件不存在则创建，并打开文件用于写入
+
     movl  $0666, %edx
     int   $LINUX_SYSCALL
-    #Store the file descriptor away
+    # 存储文件描述符
     movl  %eax, ST_FILE_DESCRIPTOR(%ebp)
-    #Write the first record
+    # 写第一条记录
     pushl ST_FILE_DESCRIPTOR(%ebp)
     pushl $record1
     call  write_record
     addl  $8, %esp
-    #Write the second record
+
+    # 写第二条记录
     pushl ST_FILE_DESCRIPTOR(%ebp)
     pushl $record2
     call  write_record
     addl  $8, %esp
-    #Write the third record
+    
+    # 写第三条记录
     pushl ST_FILE_DESCRIPTOR(%ebp)
     pushl $record3
     call  write_record
     addl  $8, %esp
-    #Close the file descriptor
+
+    # 关闭文件描述符
     movl  $SYS_CLOSE, %eax
     movl  ST_FILE_DESCRIPTOR(%ebp), %ebx
     int   $LINUX_SYSCALL
-    #Exit the program
+    
+    # 退出程序
     movl  $SYS_EXIT, %eax
     movl  $0, %ebx
     int   $LINUX_SYSCALL
