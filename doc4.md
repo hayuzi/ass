@@ -41,3 +41,17 @@ ld -m elf_i386 write_record.o write_records.o -o write_records
 ```
 
 ### 6.2 读取记录
+继续参看上一节的文件夹
+- 使用 [count_chars.s](/example/records/count_chars.s) 计算字符长度
+- 使用 [write_newline.s](/example/records/write_newline.s) 便携一个函数：写一个换行符到STDOUT
+- 使用 [read_records.s](/example/records/read_records.s) 作为读取主程序
+
+要生成这个程序，我们要会变其所有组成文件并链接他们：
+
+```
+as --32 read_record.s -o read_record.o
+as --32 count_chars.s -o count_chars.o
+as --32 write_newline.s -o write_newline.o
+as --32 read_records.s -o read_records.o
+ld -m elf_i386 read_record.o count_chars.o write_newline.o read_records.o  -o read_records
+```
